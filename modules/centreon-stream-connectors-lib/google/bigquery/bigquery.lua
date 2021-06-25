@@ -166,7 +166,7 @@ function BigQuery:load_tables_schema_file()
 
   -- return false if we can't open the file
   if not file then
-    self.sc_logger:error("[google.bq.bq_tabmes:load_tables_schema_file]: couldn't open file "
+    self.sc_logger:error("[google.bq.bq_tables:load_tables_schema_file]: couldn't open file "
       .. tostring(self.params._sc_gbq_schema_config_file_path) .. ". Make sure your table schema file is there.")
     return false
   end
@@ -178,7 +178,7 @@ function BigQuery:load_tables_schema_file()
 
   -- return false if json couldn't be parsed
   if (type(schemas) ~= "table") then
-    self.sc_logger:error("[google.bq.bq_tabmes:load_tables_schema_file]: the table schema file "
+    self.sc_logger:error("[google.bq.bq_tables:load_tables_schema_file]: the table schema file "
       .. tostring(self.params._sc_gbq_schema_config_file_path) .. ". Is not a valid json file.")
     return false
   end
