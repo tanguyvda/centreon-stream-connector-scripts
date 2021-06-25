@@ -33,6 +33,10 @@
     - [generate_postfield_param_string: parameters](#generate_postfield_param_string-parameters)
     - [generate_postfield_param_string: returns](#generate_postfield_param_string-returns)
     - [generate_postfield_param_string: example](#generate_postfield_param_string-example)
+  - [read_file method](#read_file-method)
+    - [read_file: parameters](#read_file-parameters)
+    - [read_file: returns](#read_file-returns)
+    - [read_file: example](#read_file-example)
 
 ## Introduction
 
@@ -304,4 +308,32 @@ local param_table = {
 
 local result = test_common:generate_postfield_param_string(param_table)
 --> result is "key=321Xzd&option=full&name=John%20Doe"
+```
+
+## read_file method
+
+The **read_file** method read a file and returns its content.
+
+### read_file: parameters
+
+| parameter            | type   | optional | default value |
+| -------------------- | ------ | -------- | ------------- |
+| the path to the file | string | no       |               |
+
+### read_file: returns
+
+| return       | type    | always | condition                   |
+| ------------ | ------- | ------ | --------------------------- |
+| false        | boolean | no     | if the file can't be opened |
+| file content | string  | no     | if the file is readable     |
+
+### read_file: example
+
+```bash
+echo "43.8931885,-0.5359464,13" > /tmp/secret_information.txt
+```
+
+```lua
+local result = test_common:read_file("/tmp/secret_information.txt")
+--> result is "43.8931885,-0.5359464,13"
 ```

@@ -170,4 +170,22 @@ function ScCommon:generate_postfield_param_string(params)
   return param_string
 end
 
+--- read_file: read a file a return its content
+-- @param file_path (string) the path to the file that we need to read
+-- @return file_content (string) the content of the file
+function ScCommon:read_file(file_path)
+  local file = io.open(file_path, "r")
+
+  if not file then
+    self.sc_logger:error("[sc_common:read_file]: couldn't open file "
+      .. tostring(file_path) .. ". Make sure your file is there and is readable.")
+    return false
+  end
+
+  local file_content = file:read("*a")
+  io.close(file)
+
+  return file_content
+end
+
 return sc_common
