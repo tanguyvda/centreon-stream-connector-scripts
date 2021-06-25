@@ -240,6 +240,7 @@ function ScEvent:is_valid_host()
       .. " and skip anon events is: " .. tostring(self.params.skip_anon_events))
     return false
   elseif (not self.event.cache.host and self.params.skip_anon_events == 0) then
+    self.event.cache.host = {}
     self.event.cache.host.name = self.event.host_id
   end
 
@@ -275,6 +276,7 @@ function ScEvent:is_valid_service()
       .. " and skip anon events is: " .. tostring(self.params.skip_anon_events))
     return false
   elseif (not self.event.cache.service and self.params.skip_anon_events == 0) then
+    self.event.cache.service = {}
     self.event.cache.service.description = self.event.service_id
   end
 
@@ -519,7 +521,8 @@ function ScEvent:is_valid_ba()
     self.sc_logger:warning("[sc_event:is_valid_ba]: Invalid BA with id: " .. tostring(self.event.ba_id)
       .. ". Found BA name is: " .. tostring(self.event.cache.ba.ba_name) .. ". And skip anon event param is set to: " .. tostring(self.params.skip_anon_events))
     return false
-  elseif (not self.event.cache.ba.ba_name and self.params.skip_anon_events == 0) then 
+  elseif (not self.event.cache.ba.ba_name and self.params.skip_anon_events == 0) then
+    self.event.cache.ba = {}
     self.event.cache.ba.ba_name = self.event.ba_id
   end
 
