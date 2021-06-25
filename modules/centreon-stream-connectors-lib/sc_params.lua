@@ -60,6 +60,9 @@ function sc_params.new(common, logger)
     skip_anon_events = 1,
     skip_nil_id = 1,
 
+    -- use a custom format file to format events
+    custom_event_format_file = "",
+
     -- enable or disable dedup
     enable_host_status_dedup = 1,
     enable_service_status_dedup = 1,
