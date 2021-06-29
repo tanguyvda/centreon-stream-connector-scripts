@@ -297,4 +297,31 @@ function ScParams:is_mandatory_config_set(mandatory_params, params)
   return true
 end
 
+--- load_custom_event_format_file: load event format using a json file
+-- @return false (boolean) if the file doesn't exist or is not a valid json file
+function ScEvent:load_custom_event_format_file()
+  if self.params.custom_event_format_file == "" or self.params.custom_event_format_file == nil then
+    return false
+  end
+
+  local file_content = self.common:read_file(self.params.custom_event_format_file)
+
+  if not file_content then
+    self.sc_logger:error("[sc_params:load_custom_event_format_file]: couldn't open file "
+      .. tostring(self.params.custom_event_format_file) .. ". Make sure your file is there and is readable.")
+    return false
+  end
+
+  local format_event = broker.json_decode(file_content)
+
+  if type(format_event) ~= "table" then
+    self.sc_logger:error("[sc_params:load_custom_event_format_file]: the format event file "
+      .. tostring(self.params.custom_event_format_file) .. ". Is not a valid json file. File content: "
+      .. tostring(file_content))
+    return false
+  end
+
+  self.params.format_event = format_event
+end
+
 return sc_params
