@@ -11,10 +11,11 @@ local sc_logger = require("centreon-stream-connectors-lib.sc_logger")
 local sc_common = require("centreon-stream-connectors-lib.sc_common")
 local sc_params = require("centreon-stream-connectors-lib.sc_params")
 local sc_broker = require("centreon-stream-connectors-lib.sc_broker")
+local sc_macros = require("centreon-stream-connectors-lib.sc_macros")
 
 local ScEvent = {}
 
-function sc_event.new(event, params, common, logger, broker)
+function sc_event.new(event, params, common, logger, broker, macros)
   local self = {}
 
   self.sc_logger = logger
@@ -25,6 +26,13 @@ function sc_event.new(event, params, common, logger, broker)
   self.params = params
   self.event = event
   self.sc_broker = broker
+  self.sc_macros = macros
+  
+  -- compatibility patch to avoid errors for stream connectors made using lib < 1.2.2
+  if not self.sc_macros then
+    self.sc_macros = sc_macros.new(params, logger)
+  end
+    
 
   self.event.cache = {}
 
@@ -1101,6 +1109,46 @@ function ScEvent:is_valid_downtime_event_end()
   -- any other downtime event is not about the actual end of a downtime so we return false
   self.sc_logger:debug("[sc_event:is_valid_downtime_event_end]: deletion_time not found in the downtime event. The downtime event is not about the end of a downtime")
   return false
+end
+
+--- format_event_from_file: load event format using a json file
+-- @return true|false (boolean) false if 
+function ScEvent:format_event_from_file()
+  if not self.params.format_event then
+    self.sc_logger:info("[sc_event:format_event_from_file]: ")
+    return false
+  end
+
+  --- category and element mapping 
+  local category_mapping = {
+    [1] = "neb",
+    [6] = "bam"
+  }
+
+  local element_mapping = {
+    [1] = {},
+    [6] = {}
+  }
+  
+  element_mapping[1][1] = "acknowledgement"
+  element_mapping[1][6] = "downtime"
+  element_mapping[1][14] = "host_status"
+  element_mapping[1][24] = "service_status"
+  element_mapping[6][1] = "ba_status"
+  
+  -- get category and element of the event
+  local category = self.event.category
+  local element = self.event.element
+
+  -- initiate the formated_event structure
+  self.event.formated_event = {} 
+
+  -- use the appropriate formating rules using the category and element of the event
+  for i, v in pairs(self.params.format_event[category_mapping[category]][element_mapping[element]]) do
+    self.event.formated_event[i] = self.sc_macros:replace_sc_macro(v)
+  end
+
+  return true
 end
 
 --- is_valid_storage: DEPRECATED method, use NEB category to get metric data instead
